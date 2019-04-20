@@ -100,13 +100,80 @@ def isValidMove(state, mini_square, cell):
 	else:
 		return False
 
+def isWinStateMiniSquare(state, mini_square, player):
+	'''
+	A mini-square is in win_state if either any cols,
+	any rows or any diag is successfully filled by a 
+	single player
+	params:
+	state - obj of stateObject class
+	mini_square - int for mini_square in board
+	player - macro for player
+	'''
+	mini_board = getMiniBoard(state, mini_square)
+	win_states = [
+	[mini_board[0][0], mini_board[0][1], mini_board[0][2]],
+	[mini_board[1][0], mini_board[1][1], mini_board[1][2]],
+	[mini_board[2][0], mini_board[2][1], mini_board[2][2]],
+	[mini_board[0][0], mini_board[1][0], mini_board[2][0]],
+	[mini_board[0][1], mini_board[1][1], mini_board[2][1]],
+	[mini_board[0][2], mini_board[1][2], mini_board[2][2]],
+	[mini_board[0][0], mini_board[1][1], mini_board[2][2]],
+	[mini_board[0][2], mini_board[1][1], mini_board[2][0]]
+	]
+	print(win_states)
+	if [player, player, player]	in win_states:
+		return True
+	else:
+		return False
+
+def isWinState(state, player):
+	'''
+	function to check if Complete board is in win state.
+	A win state is reached when any row, any col or any diag 
+	of mini_squares is won by a single player
+	params:
+	state - obj of stateObject class
+	player - macro for deciding player
+	'''
+	win_states = [
+		[(state, 1, player), (state, 4, player), (state, 7, player)],
+		[(state, 2, player), (state, 5, player), (state, 8, player)],
+		[(state, 3, player), (state, 6, player), (state, 9, player)],
+		[(state, 1, player), (state, 2, player), (state, 3, player)],
+		[(state, 4, player), (state, 5, player), (state, 6, player)],
+		[(state, 7, player), (state, 8, player), (state, 9, player)],
+		[(state, 7, player), (state, 5, player), (state, 3, player)],
+		[(state, 1, player), (state, 5, player), (state, 9, player)],
+	]
+	for win_state in win_states:
+		is_valid_win_state = []
+		for params in win_state:
+			print(params)
+			_ = input('sdfdsf')
+			is_valid_win_state.append(isWinStateMiniSquare(*params))
+		print(is_valid_win_state)
+		_ = input('sdfdsf')
+		if all(is_valid_win_state):
+			return True
+	return False
+
 def declareWinner(player):
+	'function to declare the player passed as winner'
 	if player == HUMAN:
 		print('Congrats! You Won.')
 	else:
 		print('You lost.')
 
 def play(state, player, first_run=False):
+	'''
+	Function that runs the game
+	params:
+	state - object of stateObject class, containing details about current
+			state of game
+	player - Macros for player
+	first_run - kwarg
+	'''
 	global valid_mini_square
 	if first_run:
 		os.system('clear')
@@ -122,7 +189,7 @@ def play(state, player, first_run=False):
 		valid_mini_square = [move]
 		updateMoveOnBoard(state, player, mini_square, move)
 		displayBoard(state)
-
+		return False
 	else:
 		if player == HUMAN:
 			os.system('clear')
@@ -146,22 +213,25 @@ def play(state, player, first_run=False):
 				if not isValidMove(state, mini_square, move):
 					print('Move invalid! Try again.')
 					move = -1
-
+			valid_mini_square = [move]
 			updateMoveOnBoard(state, player, mini_square, move)
 			displayBoard(state)
 		else:
-			aiMove(state)
-	## Checking for win or draw state
-	if isWinState(state, player):  ## Not defined yet
-		displayBoard(state)
-		declareWinner(player)
-		return True
-	elif isDrawState(state):  ## Not defined yet
-		print('Match Tied!')
-		displayBoard(state)
-		return True
-	else:
-		return False			
+			# aiMove(state)
+			_ = input('Press to pass AI turn ')
+			return False
+		## Checking for win or draw state
+		if isWinState(state, player): 
+			displayBoard(state)
+			declareWinner(player)
+			return True
+		elif isDrawState(state):  ## Not defined yet
+			pass
+			print('Match Tied!')
+			displayBoard(state)
+			return True
+		else:
+			return False			
 
 def main():
 	'''
@@ -171,10 +241,10 @@ def main():
 	done = False
 	player = HUMAN
 	state = stateObject(board)
-	play(state, player, first_run=False)
+	play(state, player, first_run=True)
 	while not done:
-		done = play(state, player)
 		player *= -1
+		done = play(state, player)
 
 if __name__ == '__main__':
 	main()
