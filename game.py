@@ -121,7 +121,6 @@ def isWinStateMiniSquare(state, mini_square, player):
 	[mini_board[0][0], mini_board[1][1], mini_board[2][2]],
 	[mini_board[0][2], mini_board[1][1], mini_board[2][0]]
 	]
-	print(win_states)
 	if [player, player, player]	in win_states:
 		return True
 	else:
@@ -149,11 +148,7 @@ def isWinState(state, player):
 	for win_state in win_states:
 		is_valid_win_state = []
 		for params in win_state:
-			print(params)
-			_ = input('sdfdsf')
 			is_valid_win_state.append(isWinStateMiniSquare(*params))
-		print(is_valid_win_state)
-		_ = input('sdfdsf')
 		if all(is_valid_win_state):
 			return True
 	return False
@@ -164,6 +159,31 @@ def declareWinner(player):
 		print('Congrats! You Won.')
 	else:
 		print('You lost.')
+
+def isDrawStateMiniSquare(state, mini_square):
+	'''
+	A mini_square is in draw state if there is no empty
+	cell in the 9*9 board.
+	params:
+	state - obj of stateObject class
+	mini_square - int for getting mini_board from entire board of boards
+	'''
+	mini_board = getMiniBoard(state, mini_square)
+	for row in mini_board:
+		if None in row:
+			return False
+	return True
+
+def isDrawState(state):
+	'''
+	Entire board is considered to be in draw state is all the 
+	mini_squares are completely filled up.
+	'''
+	for mini_square in range(1,10):
+		if not isDrawStateMiniSquare(state, mini_square):
+			return False
+	return True
+
 
 def play(state, player, first_run=False):
 	'''
@@ -226,7 +246,6 @@ def play(state, player, first_run=False):
 			declareWinner(player)
 			return True
 		elif isDrawState(state):  ## Not defined yet
-			pass
 			print('Match Tied!')
 			displayBoard(state)
 			return True
