@@ -149,8 +149,6 @@ def isWinState(state, player):
 		is_valid_win_state = []
 		for params in win_state:
 			is_valid_win_state.append(isWinStateMiniSquare(*params))
-		print('checking for:\n', win_state[0][1], win_state[1][1], win_state[2][1])
-		print(is_valid_win_state)
 		if all(is_valid_win_state):
 			return True
 	return False
@@ -188,6 +186,27 @@ def isDrawState(state):
 			return False
 	return True
 
+def getEmptyCells(state, mini_square):
+	empty_cells = []
+	mini_board = getMiniBoard(state, mini_square)
+	for i in range(1,10):
+		r, c = cell_to_pos[i]
+		if not mini_board[r][c]:
+			empty_cells.append(i)
+	print('empty_cells: ', empty_cells)
+	return empty_cells
+
+def randomValidMove(state):
+	global valid_mini_square
+	mini_square = random.choice(valid_mini_square)
+	print('mini_square: ', mini_square)
+	empty_cells = getEmptyCells(state, mini_square)
+	move = random.choice(empty_cells)
+	updateMoveOnBoard(state, COMPUTER, mini_square, move)	
+
+def aiMove(state, search_method=None):
+	if not search_method:
+		randomValidMove(state)
 
 def play(state, player, first_run=False):
 	'''
@@ -216,6 +235,7 @@ def play(state, player, first_run=False):
 		return False
 	else:
 		if player == HUMAN:
+			_ = input("sdfsdf")
 			os.system('clear')
 			print('Your turn')
 			# Display entire board
@@ -255,11 +275,8 @@ def play(state, player, first_run=False):
 			updateMoveOnBoard(state, player, mini_square, move)
 			displayBoard(state)
 		else:
-			# aiMove(state)
-			_ = input('Press to pass AI turn ')
-			return False
+			aiMove(state)
 		## Checking for win or draw state
-		print('sending for checks')
 		if isWinState(state, player):
 			displayBoard(state)
 			declareWinner(player)
