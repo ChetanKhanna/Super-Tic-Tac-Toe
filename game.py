@@ -149,6 +149,8 @@ def isWinState(state, player):
 		is_valid_win_state = []
 		for params in win_state:
 			is_valid_win_state.append(isWinStateMiniSquare(*params))
+		print('checking for:\n', win_state[0][1], win_state[1][1], win_state[2][1])
+		print(is_valid_win_state)
 		if all(is_valid_win_state):
 			return True
 	return False
@@ -178,6 +180,8 @@ def isDrawState(state):
 	'''
 	Entire board is considered to be in draw state is all the 
 	mini_squares are completely filled up.
+	param:
+	state - obj of stateObject class
 	'''
 	for mini_square in range(1,10):
 		if not isDrawStateMiniSquare(state, mini_square):
@@ -233,7 +237,21 @@ def play(state, player, first_run=False):
 				if not isValidMove(state, mini_square, move):
 					print('Move invalid! Try again.')
 					move = -1
-			valid_mini_square = [move]
+			# Listing possible valid_mini_squares for next player
+			# If mini_square at 'move' is in Win or Draw state
+			# list all those squares that are currently not in win or draw
+			# state; else list mini_square at 'move' as valid
+			if isWinStateMiniSquare(state, move, player) or \
+				isDrawStateMiniSquare(state, move):
+				valid_mini_square.clear()
+				for i in range(1,10):
+					if not(isWinStateMiniSquare(state, i, player)
+						or isDrawStateMiniSquare(state, i)):
+						valid_mini_square.append(i)
+			else:
+				valid_mini_square.clear()
+				valid_mini_square.append(move)
+
 			updateMoveOnBoard(state, player, mini_square, move)
 			displayBoard(state)
 		else:
@@ -241,11 +259,12 @@ def play(state, player, first_run=False):
 			_ = input('Press to pass AI turn ')
 			return False
 		## Checking for win or draw state
-		if isWinState(state, player): 
+		print('sending for checks')
+		if isWinState(state, player):
 			displayBoard(state)
 			declareWinner(player)
 			return True
-		elif isDrawState(state):  ## Not defined yet
+		elif isDrawState(state):
 			print('Match Tied!')
 			displayBoard(state)
 			return True
