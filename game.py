@@ -193,15 +193,15 @@ def getEmptyCells(state, mini_square):
 		r, c = cell_to_pos[i]
 		if not mini_board[r][c]:
 			empty_cells.append(i)
-	print('empty_cells: ', empty_cells)
 	return empty_cells
 
 def randomValidMove(state):
 	global valid_mini_square
 	mini_square = random.choice(valid_mini_square)
-	print('mini_square: ', mini_square)
 	empty_cells = getEmptyCells(state, mini_square)
 	move = random.choice(empty_cells)
+	valid_mini_square.clear()
+	valid_mini_square.append(move)
 	updateMoveOnBoard(state, COMPUTER, mini_square, move)	
 
 def aiMove(state, search_method=None):
@@ -235,7 +235,6 @@ def play(state, player, first_run=False):
 		return False
 	else:
 		if player == HUMAN:
-			_ = input("sdfsdf")
 			os.system('clear')
 			print('Your turn')
 			# Display entire board
