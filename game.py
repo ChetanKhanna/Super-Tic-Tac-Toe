@@ -204,9 +204,29 @@ def randomValidMove(state):
 	valid_mini_square.append(move)
 	updateMoveOnBoard(state, COMPUTER, mini_square, move)	
 
+def getSuccessors(state, player):
+	global valid_mini_square
+	successors = []
+	for mini_square in valid_mini_square:
+		empty_cells = getEmptyCells(state, mini_square)
+		temp_state = copy.deepcopy(state)
+		for cell in empty_cells:
+			updateMoveOnBoard(temp_state, player, mini_square, cell)
+			successors.append(temp_state)
+			temp_state = copy.deepcopy(state)
+	return successors
+
+def minmax(state, player):
+	min_val = -1*inf*player
+	for s in getSuccessors(state, player):
+		displayBoard(s)
+	_ = input('sdfsdf')
+
 def aiMove(state, search_method=None):
 	if not search_method:
 		randomValidMove(state)
+	elif search_method == 'minmax':
+		minmax(state, COMPUTER)
 
 def play(state, player, first_run=False):
 	'''
@@ -274,7 +294,7 @@ def play(state, player, first_run=False):
 			updateMoveOnBoard(state, player, mini_square, move)
 			displayBoard(state)
 		else:
-			aiMove(state)
+			aiMove(state, search_method='minmax')
 		## Checking for win or draw state
 		if isWinState(state, player):
 			displayBoard(state)
