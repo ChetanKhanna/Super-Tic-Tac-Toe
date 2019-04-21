@@ -216,11 +216,59 @@ def getSuccessors(state, player):
 			temp_state = copy.deepcopy(state)
 	return successors
 
+def isLeafNode(state):
+	if isWinState(state, HUMAN):
+		return True
+	if isWinState(state, COMPUTER):
+		return True
+	if isDrawState(state):
+		return True
+	return False	
+
+def evaluate(state):
+	if isWinState(state, HUMAN):
+		return 1
+	if isWinState(state, COMPUTER):
+		return -1
+	if isDrawState(state):
+		return 0	
+
+def minmaxUtil(state, player):
+	if isLeafNode(state):
+		# if current state is leaf node, we evaluate it - (1, 0 or -1)
+		# and return the control to parent node, whose value gets updated accordingly
+		return evaluate(state)
+	best = -player*inf
+	for s in getSuccessors(state, player):
+		# os.system('clear')
+		# print('Checking:')
+		# displayBoard(s)
+		# _ = input('sdfsdf')
+		value = minmaxUtil(s, player*(-1))
+		if player == HUMAN: ## MaxPlayer
+			if value > best:
+				best = value
+		else:
+			if value < best:
+				best = value
+	return best
+
 def minmax(state, player):
 	min_val = -1*inf*player
 	for s in getSuccessors(state, player):
+		os.system('clear')
+		print('Checking:')
 		displayBoard(s)
-	_ = input('sdfsdf')
+		_ = input('sdfsdf')
+		value = minmaxUtil(s, player*(-1))
+		if min_val > value:
+			best_move = s
+			min_val = value
+	# updating original state
+	for i in range(9):
+		for j in range(3):
+			for k in range(3):
+				state.state[i][j][k] = best_move.state[i][j][k]
 
 def aiMove(state, search_method=None):
 	if not search_method:
